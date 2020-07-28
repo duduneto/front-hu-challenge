@@ -46,7 +46,9 @@ const Table: React.FC<ITableProps> = (props) => {
               onClose={handleModalOnClose}
               title={"Adicionar Nova Avenida"}
             >
-              <FormAdd/>
+              <FormAdd
+              onCancel={handleModalOnClose}
+              />
             </Modal>
           </div>
           <div>
