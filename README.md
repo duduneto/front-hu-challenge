@@ -1,3 +1,3 @@
-##To run this challenge:
+To run this challenge:
 
-###yarn start
+yarn start
