@@ -252,3 +252,10 @@ input:checked + .slider:before {
 .mt-1{
   margin-top: 1rem;
 }
+.m2{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.alert-span{
+  color: rgb(255, 68, 68);
+}

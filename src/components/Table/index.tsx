@@ -1,18 +1,20 @@
-// tslint:disable-next-line:no-console
 import * as React from "react";
-interface ITableProps {
-  data: any[];
-  columns: any[];
-}
-
 import { Modal } from "../index";
-import { FormAdd } from '../../utils';
+import { FormAdd, FormEdit } from "../../utils";
+import { IAvenues } from '../../store/ducks/avenues/types'
+
+    interface ITableProps {
+      data: any[];
+      columns: any[];
+    }
 
 const Table: React.FC<ITableProps> = (props) => {
   const { data, columns } = props;
 
   const [id, setId] = React.useState<number | null>();
   const [modal, setModal] = React.useState<boolean>(false);
+  const [editModal, setEditModal] = React.useState<boolean>(false);
+  const [selectedToEdit, setSelectedToEdit] = React.useState<IAvenues>();
 
   const handleSelectedRow = (itemId: number) => {
     if (id === itemId) {
@@ -30,6 +32,15 @@ const Table: React.FC<ITableProps> = (props) => {
     setModal(false);
   };
 
+  const handleEditModalOnClose = () => {
+    setEditModal(false);
+  };
+
+  const handleEdit = (item:IAvenues) => {
+    setEditModal(true);
+    setSelectedToEdit(item);
+  }
+
   return (
     <>
       <div className="header-main-page-container">
@@ -39,17 +50,8 @@ const Table: React.FC<ITableProps> = (props) => {
         <div className="header-main-page-container-actions">
           <div>
             <button className="btn-primary" onClick={handleOpenModal}>
-              Adicionar Novo
+              Adicionar
             </button>
-            <Modal
-              open={modal}
-              onClose={handleModalOnClose}
-              title={"Adicionar Nova Avenida"}
-            >
-              <FormAdd
-              onCancel={handleModalOnClose}
-              />
-            </Modal>
           </div>
           <div>
             <button className={!!id ? "btn-danger" : "btn-disable"}>
@@ -58,6 +60,29 @@ const Table: React.FC<ITableProps> = (props) => {
           </div>
         </div>
       </div>
+
+      {/* FORMS */}
+      <Modal
+        open={modal}
+        onClose={handleModalOnClose}
+        title={"Adicionar Nova Avenida"}
+      >
+        <FormAdd onCancel={handleModalOnClose} onFinish={handleModalOnClose} />
+      </Modal>
+
+      <Modal
+        open={editModal}
+        onClose={handleEditModalOnClose}
+        title={"Adicionar Nova Avenida"}
+      >
+        <FormEdit
+          onCancel={handleEditModalOnClose}
+          onFinish={handleEditModalOnClose}
+          data={selectedToEdit}
+        />
+      </Modal>
+      {/* ------- */}
+
       <div className="box-table">
         <table style={{ width: "100%" }}>
           <tr className="table-header">
@@ -79,7 +104,9 @@ const Table: React.FC<ITableProps> = (props) => {
                   if (!!column.render) {
                     return (
                       <div className="holder-render-container">
-                        {column.render()}
+                        <button onClick={() => {
+                          handleEdit(item)
+                        }} className="btn-defaul">Edit</button>
                       </div>
                     );
                   } else {
