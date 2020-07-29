@@ -2,6 +2,8 @@ import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IAvenues } from "../../store/ducks/avenues/types";
 
+import { Loader } from "../../utils";
+
 import { numberMask } from "../index";
 
 interface IFormAddProps {
@@ -32,8 +34,6 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
 
   const avenues = useSelector(selectAvenue);
 
-  console.log(avenues);
-
   const { onCancel, onFinish } = props;
 
   const [requiredFields] = React.useState<string[]>(["name", "extension"]);
@@ -47,16 +47,16 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
   });
 
   React.useEffect(() => {
-    if(!!submit && !avenues.loading){
+    if (!!submit && !avenues.loading) {
       onFinish();
     }
-  },[avenues])
+  }, [avenues]);
 
   React.useEffect(() => {
-    if(!!missingFields){
+    if (!!missingFields) {
       setMissingFields(false);
     }
-  },[state])
+  }, [state]);
 
   const handleState = (newState: any) => {
     setState((prevState) => ({ ...prevState, ...newState }));
@@ -66,7 +66,6 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
     const allFields = requiredFields.some(
       (fieldName: string) => !!state[fieldName] === false
     );
-    console.log(allFields);
     if (!allFields) {
       setSubmit(true);
       setMissingFields(false);
@@ -160,7 +159,7 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
           </div>
           <div>
             <button className="btn-primary" onClick={handleSubmit}>
-              Salvar
+              {avenues.loading ? <Loader size="sm" /> : <span>Salvar</span>}
             </button>
           </div>
         </div>

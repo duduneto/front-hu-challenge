@@ -2,6 +2,8 @@ import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IAvenues } from "../../store/ducks/avenues/types";
 
+import { Loader } from '../../utils';
+
 import { numberMask } from "../index";
 
 interface IFormAddProps {
@@ -40,9 +42,11 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
   const [submit, setSubmit] = React.useState<boolean>(false);
   const [state, setState] = React.useState<IFormState>({
     name: data.name,
-    extension: data.extension_km,
+    extension: decimalMask(String(data.extension_km * 100)),
     hasCycleTrack: data.has_cycle_track,
-    extensionCycleTrack: data.cycle_track_extension_km,
+    extensionCycleTrack: decimalMask(
+      String(data.cycle_track_extension_km * 100)
+    ),
   });
 
   React.useEffect(() => {
@@ -161,7 +165,7 @@ const FormAdd: React.FC<IFormAddProps> = (props) => {
           </div>
           <div>
             <button className="btn-primary" onClick={handleSubmit}>
-              Salvar
+              {avenues.loading ? <Loader size="sm" /> : <span>Salvar</span>}
             </button>
           </div>
         </div>

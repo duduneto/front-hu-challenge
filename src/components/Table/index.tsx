@@ -1,15 +1,30 @@
 import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "../index";
-import { FormAdd, FormEdit } from "../../utils";
-import { IAvenues } from '../../store/ducks/avenues/types'
+import { FormAdd, FormEdit, Loader } from "../../utils";
+import { IAvenues } from "../../store/ducks/avenues/types";
 
-    interface ITableProps {
-      data: any[];
-      columns: any[];
-    }
+interface ITableProps {
+  data: any[];
+  columns: any[];
+}
+
+interface IRootState {
+  avenues: {
+    data: IAvenues[];
+    loading: boolean;
+    error: boolean;
+    refresh: boolean;
+  };
+}
+
+const selectAvenue = (state: IRootState) => state.avenues;
 
 const Table: React.FC<ITableProps> = (props) => {
   const { data, columns } = props;
+
+  const dispatch = useDispatch();
+  const avenues = useSelector(selectAvenue);
 
   const [id, setId] = React.useState<number | null>();
   const [modal, setModal] = React.useState<boolean>(false);
@@ -36,10 +51,17 @@ const Table: React.FC<ITableProps> = (props) => {
     setEditModal(false);
   };
 
-  const handleEdit = (item:IAvenues) => {
+  const handleEdit = (item: IAvenues) => {
     setEditModal(true);
     setSelectedToEdit(item);
-  }
+  };
+
+  const handleDelete = () => {
+    dispatch({
+      type: "@avenues/LOAD_DESTROY",
+      payload: id,
+    });
+  };
 
   return (
     <>
@@ -54,7 +76,10 @@ const Table: React.FC<ITableProps> = (props) => {
             </button>
           </div>
           <div>
-            <button className={!!id ? "btn-danger" : "btn-disable"}>
+            <button
+              onClick={handleDelete}
+              className={!!id ? "btn-danger" : "btn-disable"}
+            >
               Excluir
             </button>
           </div>
@@ -90,7 +115,9 @@ const Table: React.FC<ITableProps> = (props) => {
               <th>{column.title}</th>
             ))}
           </tr>
-          {data.length === 0 || !data ? (
+          {avenues.loading ? (
+            <Loader size="sm" />
+          ) : data.length === 0 || !data ? (
             <div className="empty-table-container">
               <span>Sem Dados</span>
             </div>
@@ -104,9 +131,14 @@ const Table: React.FC<ITableProps> = (props) => {
                   if (!!column.render) {
                     return (
                       <div className="holder-render-container">
-                        <button onClick={() => {
-                          handleEdit(item)
-                        }} className="btn-defaul">Edit</button>
+                        <button
+                          onClick={() => {
+                            handleEdit(item);
+                          }}
+                          className="btn-defaul"
+                        >
+                          Edit
+                        </button>
                       </div>
                     );
                   } else {

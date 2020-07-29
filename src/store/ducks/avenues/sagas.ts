@@ -54,8 +54,12 @@ export function* loadUpdate({ payload }: any) {
 }
 export function* loadDestroy({ payload }: any) {
   try {
-    const response = yield call(api.get, `/avenue/${payload}`);
-    yield put(loadSuccess(response));
+    const response = yield call(api.delete, `/avenue/${payload}`);
+    const toPayload = {
+      ...response,
+      refresh: true
+    }
+    yield put(loadSuccess(toPayload));
   } catch (error) {
     yield put(loadFailure());
   }
